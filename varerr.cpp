@@ -44,11 +44,35 @@ double Varerr::getErrorAbs() const {
 const Varerr Varerr::operator*(const Varerr& ve) const {
     return Varerr(Unit::operator*(ve), this->e + ve.getError());
 }
+const Varerr Varerr::operator*(const Unit& u) const {
+    return Varerr(Unit::operator*(u), this->e);
+}
+const Varerr Varerr::operator*(double d) const {
+    return Varerr(Unit::operator*(d), this->e);
+}
+const Varerr operator*(const Unit& u, const Varerr& ve) {
+    return ve * u;
+}
+const Varerr operator*(double d, const Varerr& ve) {
+    return ve * d;
+}
 
 // /
 
 const Varerr Varerr::operator/(const Varerr& ve) const {
-    return Varerr(Unit::operator*(ve), this->e + ve.getError());
+    return Varerr(Unit::operator/(ve), this->e + ve.getError());
+}
+const Varerr Varerr::operator/(const Unit& u) const {
+    return Varerr(Unit::operator/(u), this->e);
+}
+const Varerr Varerr::operator/(double d) const {
+    return Varerr(Unit::operator/(d), this->e);
+}
+const Varerr operator/(const Unit& u, const Varerr& ve) {
+    return Varerr(u/static_cast<const Unit&>(ve), ve.getError());
+}
+const Varerr operator/(double d, const Varerr& ve) {
+    return Varerr(operator/(d, static_cast<const Unit&>(ve)), ve.getError());
 }
 
 // +

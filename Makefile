@@ -7,10 +7,10 @@ CC=g++
 
 all: $(OBJS)
 
-libvarerr.a: varerr.o unit.o
+libvarerr.a: varerr.o unit.o stat.o
 	ar rvs $@ $^
 
-libvarerr.so: varerr.o unit.o
+libvarerr.so: varerr.o unit.o stat.o
 	$(CC) --shared -o $@ $^
 
 %.o: %.cpp

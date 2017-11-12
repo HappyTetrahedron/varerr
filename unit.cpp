@@ -159,6 +159,10 @@ bool Unit::hasSameUnitAs(const Unit& u) const {
     return res;
 }
 
+const Unit Unit::getBaseUnit(void) const {
+    return Unit(1, this->getUnit());
+}
+
 
 bool Unit::hasUnit(void) const {
     return !Unit::hasSameUnitAs(bu::NU);
