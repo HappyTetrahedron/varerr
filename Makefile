@@ -1,11 +1,14 @@
 OBJS=libvarerr.a libvarerr.so
 
-CFLAGS=-Wno-narrowing -Og -ggdb
+CFLAGS=-Wno-narrowing -O2
 CC=g++
 
 .PHONY: all clean check distclean
 
 all: $(OBJS)
+
+$(BUILD_DIR):
+	mkdir -p $@
 
 libvarerr.a: varerr.o unit.o stat.o
 	ar rvs $@ $^

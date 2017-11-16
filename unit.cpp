@@ -1,6 +1,7 @@
 #include <iostream>
 #include <cmath>
 #include <string>
+#include <cstdio>
 
 #include "unit.h"
 #include "varerr.h"
@@ -37,13 +38,17 @@ const Unit Unit::operator-(void) const {
 // +
 
 const Unit Unit::operator+(const Unit& u) const {
-    if (!this->hasSameUnitAs(u))
+    if (!this->hasSameUnitAs(u)) {
+        std::cerr << "Not the same units in operator +";
         throw 1;
+    }
     return Unit(this->fac + u.getValue(), exp);
 }
 const Unit Unit::operator+(double d) const {
-    if (this->hasUnit())
+    if (this->hasUnit()) {
+        std::cerr << "Not the same units in operator +";
         throw 1;
+    }
     return Unit(this->fac + d, exp);
 }
 const Unit operator+(double d, const Unit& u) {
@@ -130,7 +135,7 @@ double Unit::getValueInUnit(const Unit& u) const{
 const Varerr Unit::operator<<(const Unit& u) const {
     if (!this->hasSameUnitAs(u))
         throw 1;
-    return Varerr(*this, u.getValue()/this->fac);
+    return Varerr(*this, (this->fac == 0.0 ? 0.0 : u.getValue()/this->fac));
 }
 
 const Varerr Unit::operator<<(double e) const {
@@ -170,12 +175,12 @@ bool Unit::hasUnit(void) const {
 
 std::string Unit::toString(void) const {
     int j;
+    char c[100];
     double d = this->getValue();
     std::string s("");
-    if (d == (int) d) 
-        s = std::to_string((int) d);
-    else
-        s = std::to_string(d);
+    size_t len = sprintf(c, "%.10e", d);
+    c[len] = '\0';
+    s += c;
     for (j = 0; j < 6; j++) {
         if (!this->getUnit(j) == 0) {
             s = s + LOOKUP[j] ;
@@ -188,4 +193,17 @@ std::string Unit::toString(void) const {
         }
     }
     return s;
+}
+
+void Unit::operator=(const Unit& u) {
+    int i;
+    this->fac = u.getValue();
+    for(i=0; i<6; i++)
+        this->exp[i] = u.getUnit(i);
+}
+void Unit::operator=(double d) {
+    int i;
+    this->fac = d;
+    for(i=0; i<6; i++)
+        this->exp[i] = 0;
 }

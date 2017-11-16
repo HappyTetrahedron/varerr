@@ -7,6 +7,7 @@
 class Varerr: public Unit {
     public:
         Varerr();
+        Varerr(const Unit&);
         Varerr(const Unit&, double);
         Varerr(const Unit&, const Unit&);
         Varerr(const Varerr&);
@@ -51,8 +52,12 @@ class Varerr: public Unit {
 
         std::string toString(void) const;
 
+        void operator=(const Varerr&);
+        void operator=(const Unit&);
+        void operator=(double);
+
     private:
-        const double e;
+        double e;
 };
 
 #endif

@@ -13,7 +13,10 @@ double sqrts(double d1, double d2) {
 
 //
 
+
 Varerr::Varerr(): Unit(), e(0) {}
+
+Varerr::Varerr(const Unit &u): Varerr(u, 0) {}
 
 Varerr::Varerr(const Unit& v, double e): 
     Unit(v.getValue(), v.getUnit()), 
@@ -79,16 +82,18 @@ const Varerr operator/(double d, const Varerr& ve) {
 
 const Varerr Varerr::operator+(const Varerr& ve) const {
     double s = ve.getValue() + this->fac;
-    return Varerr(Unit::operator+(ve), 
-        sqrts(this->getErrorAbs()/s, ve.getErrorAbs()/s));
+    return Varerr(Unit::operator+(ve), ( s == 0 ? 0.0 :
+        sqrts(this->getErrorAbs()/s, ve.getErrorAbs()/s)));
 }
 const Varerr Varerr::operator+(const Unit& u) const {
     double s = u.getValue() + this->fac;
-    return Varerr(Unit::operator+(u), this->getErrorAbs()/s);
+    return Varerr(Unit::operator+(u), ( s == 0 ? 0.0 : 
+        this->getErrorAbs()/s));
 }
 const Varerr Varerr::operator+(double d) const {
     double s = d + this->fac;
-    return Varerr(Unit::operator+(d), this->getErrorAbs()/s);
+    return Varerr(Unit::operator+(d), (s == 0 ? 0.0 : 
+        this->getErrorAbs()/s));
 }
 const Varerr operator+(const Unit& u, const Varerr& ve) {
     return ve + u;
@@ -100,23 +105,23 @@ const Varerr operator+(double d, const Varerr& ve) {
 // -
 
 const Varerr Varerr::operator-(const Varerr& ve) const {
-    double s = ve.getValue() + this->fac;
+    double s = ve.getValue() - this->fac;
     return Varerr(Unit::operator-(ve), 
         sqrts(this->getErrorAbs()/s, ve.getErrorAbs()/s));
 }
 const Varerr Varerr::operator-(const Unit& u) const {
-    double s = u.getValue() + this->fac;
+    double s = u.getValue() - this->fac;
     return Varerr(Unit::operator-(u), this->getErrorAbs()/s);
 }
 const Varerr Varerr::operator-(double d) const {
-    double s = d + this->fac;
+    double s = d - this->fac;
     return Varerr(Unit::operator-(d), this->getErrorAbs()/s);
 }
 const Varerr operator-(const Unit& u, const Varerr& ve) {
-    return ve - u;
+    return -1*(ve - u);
 }
 const Varerr operator-(double d, const Varerr& ve) {
-    return ve - d;
+    return -1*(ve - d);
 }
 
 // ^
@@ -125,7 +130,7 @@ const Varerr Varerr::operator^(const Varerr& ve) const {
     double d1 = ve.getValue() * (std::pow(this->fac, ve.getValue() - 1)) 
         * this->getErrorAbs();
     double d2 = std::log(this->fac) * std::pow(this->fac, ve.getValue()) 
-        * this->getErrorAbs();
+        * ve.getErrorAbs();
     return Varerr(Unit::operator^(ve), 
         sqrts(d1, d2)/std::pow(this->fac, ve.getValue()));
 }
@@ -140,9 +145,7 @@ const Varerr Varerr::operator^(double d) const {
     return Varerr(Unit::operator^(d), d1);
 }
 const Varerr operator^(const Unit& u, const Varerr& ve) {
-    double d1 = std::log(ve.getValue()) * std::pow(ve.getValue(), u.getValue()) 
-        * ve.getErrorAbs();
-    return Varerr(operator^(Varerr(u, 0), ve), d1);
+    return Varerr(u, 0) ^ ve;
 }
 const Varerr operator^(double d, const Varerr& ve) {
     double d1 = std::log(ve.getValue()) * std::pow(ve.getValue(), d) 
@@ -160,3 +163,18 @@ std::string Varerr::toString(void) const {
     s = s + "%";
     return s;
 }
+
+void Varerr::operator=(const Varerr& ve) {
+    Unit::operator=(ve);
+    this->e = ve.e;
+}
+void Varerr::operator=(const Unit& u) {
+    Unit::operator=(u);
+    this->e = 0;
+}
+void Varerr::operator=(double d) {
+    Unit::operator=(d);
+    this->e = 0;
+}
+
+
