@@ -88,14 +88,14 @@ const Unit Unit::operator/(const Unit& u) const{
     double exp[6];
     int j;
     for (j = 0; j < 6; j++)
-        exp[j] = this->exp[j] - u.getUnit()[j];
+        exp[j] = this->exp[j] - u.getUnit(j);
     return Unit(this->fac / u.getValue(), exp);
 }
 const Unit Unit::operator/(double d) const{
     return Unit(this->fac / d, this->exp);
 }
 const Unit operator/(double d, const Unit& u) {
-    return u / (d * bu::NU);
+    return (d*bu::NU)/u;
 }
 
 // ^

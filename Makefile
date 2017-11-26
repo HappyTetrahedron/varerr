@@ -3,7 +3,9 @@ OBJS=libvarerr.a libvarerr.so
 CFLAGS=-Wno-narrowing -O2
 CC=g++
 
-.PHONY: all clean check distclean
+.PHONY: all clean check distclean build
+
+build: | all clean
 
 all: $(OBJS)
 
